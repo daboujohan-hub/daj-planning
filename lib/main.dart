@@ -13,6 +13,7 @@ const Map<String, Color> couleurs = {
   'Informatique': Color(0xFF22C55E), // vert
   'Technologie': Color(0xFFF97316), // orange
   'Cours': Color(0xFF9CA3AF), // gris
+  'Maths': Color(0xFFA855F7), // violet
 };
 
 const List<String> jours = [
@@ -36,7 +37,8 @@ String hm(int h, int m) => '${_two(h)}h${_two(m)}';
 
 const List<Slot> schedule = [
   // Lundi
-  Slot(1, 'Français', 8, 0, 11, 30),
+  Slot(1, 'Français', 8, 0, 10, 0),
+  Slot(1, 'Maths', 10, 15, 11, 30),
   Slot(1, 'Cours', 13, 30, 18, 15),
   Slot(1, 'Anglais', 19, 30, 21, 0),
   // Mardi
@@ -45,11 +47,13 @@ const List<Slot> schedule = [
   Slot(2, 'Informatique', 19, 30, 21, 0),
   // Mercredi
   Slot(3, 'Cours', 7, 30, 9, 15),
-  Slot(3, 'Français', 10, 30, 12, 30),
+  Slot(3, 'Français', 10, 30, 11, 30),
+  Slot(3, 'Maths', 11, 30, 12, 30),
   Slot(3, 'Anglais', 14, 0, 17, 0),
   Slot(3, 'Informatique', 19, 0, 21, 0),
   // Jeudi
-  Slot(4, 'Français', 8, 0, 11, 30),
+  Slot(4, 'Français', 8, 0, 10, 0),
+  Slot(4, 'Maths', 10, 15, 11, 30),
   Slot(4, 'Cours', 13, 30, 18, 15),
   Slot(4, 'Anglais', 19, 30, 21, 0),
   // Vendredi
@@ -57,7 +61,8 @@ const List<Slot> schedule = [
   Slot(5, 'Informatique', 14, 0, 17, 0),
   Slot(5, 'Français', 19, 0, 21, 0),
   // Samedi
-  Slot(6, 'Français', 9, 0, 12, 0),
+  Slot(6, 'Français', 9, 0, 10, 45),
+  Slot(6, 'Maths', 11, 0, 12, 0),
   Slot(6, 'Anglais', 14, 0, 17, 0),
   Slot(6, 'Technologie', 19, 0, 21, 0),
   // Dimanche
