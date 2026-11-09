@@ -30,7 +30,7 @@ receivers = """<receiver android:exported="false"
 """
 
 assert "<application" in t and "</application>" in t, "Manifest inattendu"
-t = t.replace("<application", perms + "    <application", 1)
+t = t.replace("<application", perms + "    <application android:allowBackup=\"false\"", 1)
 t = re.sub(r'android:label="[^"]*"', 'android:label="DAJ Planning"', t, count=1)
 t = t.replace("</application>", receivers + "    </application>", 1)
 man.write_text(t)

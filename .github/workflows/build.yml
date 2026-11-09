@@ -18,6 +18,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.32.0'
           channel: stable
           cache: true
 
@@ -29,13 +30,21 @@ jobs:
           cp pubspec.yaml build_app/pubspec.yaml
           rm -rf build_app/lib
           cp -r lib build_app/lib
+          python3 make_icon.py build_app/assets
           python3 patch_android.py build_app/android
+
+      - name: Récupérer les paquets
+        working-directory: build_app
+        run: flutter pub get
+
+      - name: Icône de l'appli (sans bloquer si ça échoue)
+        working-directory: build_app
+        continue-on-error: true
+        run: dart run flutter_launcher_icons
 
       - name: Compiler l'APK
         working-directory: build_app
-        run: |
-          flutter pub get
-          flutter build apk --release
+        run: flutter build apk --release --obfuscate --split-debug-info=build/symbols
 
       - uses: actions/upload-artifact@v4
         with:
