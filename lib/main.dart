@@ -49,7 +49,8 @@ const List<Slot> schedule = [
   Slot(3, 'Cours', 7, 30, 9, 15),
   Slot(3, 'Français', 10, 30, 11, 30),
   Slot(3, 'Maths', 11, 30, 12, 30),
-  Slot(3, 'Anglais', 14, 0, 17, 0),
+  Slot(3, 'Maths', 14, 0, 16, 0),
+  Slot(3, 'Technologie', 16, 0, 17, 0),
   Slot(3, 'Informatique', 19, 0, 21, 0),
   // Jeudi
   Slot(4, 'Français', 8, 0, 10, 0),
@@ -63,7 +64,7 @@ const List<Slot> schedule = [
   // Samedi
   Slot(6, 'Français', 9, 0, 10, 45),
   Slot(6, 'Maths', 11, 0, 12, 0),
-  Slot(6, 'Anglais', 14, 0, 17, 0),
+  Slot(6, 'Technologie', 14, 0, 17, 0),
   Slot(6, 'Technologie', 19, 0, 21, 0),
   // Dimanche
   Slot(7, 'Français', 9, 0, 12, 0),
