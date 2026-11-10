@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
+import 'extras.dart';
 
 // ───────────────────────── Données ─────────────────────────
 
@@ -395,6 +396,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initNotifications();
   await state.load();
+  await extras.load();
   unawaited(scheduleAll(state.slots, state.reminder));
   runApp(const DajApp());
 }
@@ -449,7 +451,8 @@ class _HomeState extends State<Home> {
         children: const [
           TodayScreen(),
           WeekScreen(),
-          SoonScreen('Temps libre'),
+          LibreScreen(),
+          VideosScreen(),
           BilanScreen(),
         ],
       ),
@@ -471,6 +474,7 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Aujourd\'hui'),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Semaine'),
           BottomNavigationBarItem(icon: Icon(Icons.tv), label: 'Libre'),
+          BottomNavigationBarItem(icon: Icon(Icons.ondemand_video), label: 'Vidéos'),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Bilan'),
         ],
       ),
@@ -918,6 +922,7 @@ class _TodayScreenState extends State<TodayScreen> {
                 onPressed: () {
                   final m = (nowMin - s.startMin).clamp(1, s.minutes).toInt();
                   state.markDone(now, s, minutes: m);
+                  askNote(context, s);
                 },
                 child: const Text('Terminé', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
@@ -1022,6 +1027,7 @@ class _TodayScreenState extends State<TodayScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             timerCard(),
+            const MissionCard(),
             ...rows,
             if (missed.isNotEmpty) ...[
               const Padding(
@@ -1291,3 +1297,7 @@ class BilanScreen extends StatelessWidget {
     );
   }
 }
+
+/// Programme une notification ponctuelle (utilise par les ecrans en plus).
+Future<void> zonedNotify(int id, String title, String body, DateTime when) =>
+    _zoned(id, title, body, when);
