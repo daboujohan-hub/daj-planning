@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'extras.dart';
+import 'videos.dart';
 
 // ───────────────────────── Données ─────────────────────────
 
@@ -452,7 +453,7 @@ class _HomeState extends State<Home> {
           TodayScreen(),
           WeekScreen(),
           LibreScreen(),
-          VideosScreen(),
+          VideosHub(),
           BilanScreen(),
         ],
       ),
