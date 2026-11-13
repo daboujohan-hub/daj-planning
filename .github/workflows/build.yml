@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DAJ_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -21,6 +23,18 @@ jobs:
           flutter-version: '3.32.0'
           channel: stable
           cache: true
+
+      - name: Signature fixe (si configurée)
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/daj.p12"
+            echo "DAJ_KEYSTORE=$RUNNER_TEMP/daj.p12" >> "$GITHUB_ENV"
+            echo "Signature fixe activée"
+          else
+            echo "Pas de clé : signature temporaire"
+          fi
 
       - name: Créer le squelette Android
         run: flutter create --org com.aboudev --project-name daj_planning --platforms=android build_app
@@ -45,6 +59,10 @@ jobs:
       - name: Compiler l'APK
         working-directory: build_app
         run: flutter build apk --release --obfuscate --split-debug-info=build/symbols
+
+      - name: Empreinte de la signature
+        continue-on-error: true
+        run: keytool -printcert -jarfile build_app/build/app/outputs/flutter-apk/app-release.apk | grep -i "SHA256"
 
       - uses: actions/upload-artifact@v4
         with:

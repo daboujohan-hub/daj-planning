@@ -64,3 +64,25 @@ else:
     raise SystemExit("build.gradle introuvable")
 
 print("Patch Android OK")
+
+# ---------- Signature fixe (si les secrets GitHub existent) ----------
+import os
+
+if os.environ.get("DAJ_KEYSTORE") and os.environ.get("DAJ_STORE_PASSWORD") and kts.exists():
+    g = kts.read_text()
+    block = """    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("DAJ_KEYSTORE"))
+            storePassword = System.getenv("DAJ_STORE_PASSWORD")
+            keyAlias = "daj"
+            keyPassword = System.getenv("DAJ_STORE_PASSWORD")
+        }
+    }
+"""
+    assert "buildTypes {" in g, "buildTypes introuvable"
+    g = g.replace("buildTypes {", block + "    buildTypes {", 1)
+    g = g.replace('signingConfigs.getByName("debug")', 'signingConfigs.getByName("release")')
+    kts.write_text(g)
+    print("Signature fixe activée")
+else:
+    print("Signature temporaire (pas de clé configurée)")
