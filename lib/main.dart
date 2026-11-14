@@ -12,6 +12,7 @@ import 'plus.dart';
 import 'organiser.dart';
 import 'suivi.dart';
 import 'conges.dart';
+import 'verrou.dart';
 
 // ───────────────────────── Données ─────────────────────────
 
@@ -410,9 +411,12 @@ Future<void> main() async {
   await orga.load();
   await suivi.load();
   await conges.load();
+  await verrou.load();
+  await silence.load();
   await scheduleAll(state.slots, state.reminder);
   await orga.reschedule();
   await conges.reschedule();
+  await silence.reschedule();
   runApp(const DajApp());
 }
 
@@ -432,6 +436,13 @@ class DajApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: vert,
           brightness: Brightness.dark,
+        ),
+      ),
+      builder: (context, child) => ValueListenableBuilder<double>(
+        valueListenable: textScale,
+        builder: (context, s, _) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(s)),
+          child: LockGate(child: child!),
         ),
       ),
       home: const Home(),
@@ -550,6 +561,8 @@ void showSettings(BuildContext context) {
             const SizedBox(height: 4),
             const PlusTiles(),
             const CongesTile(),
+            const LockTile(),
+            const SilenceTile(),
             TextButton.icon(
               icon: const Icon(Icons.restore),
               label: const Text('Rétablir l\'emploi du temps d\'origine'),
