@@ -11,6 +11,7 @@ import 'videos.dart';
 import 'plus.dart';
 import 'organiser.dart';
 import 'suivi.dart';
+import 'conges.dart';
 
 // ───────────────────────── Données ─────────────────────────
 
@@ -366,6 +367,7 @@ Future<void> scheduleAll(List<Slot> slots, int minutesBefore) async {
   final now = DateTime.now();
   for (var i = 0; i < slots.length; i++) {
     final s = slots[i];
+    if (s.subject == 'Cours') continue;
     var d = DateTime(now.year, now.month, now.day, s.sh, s.sm - minutesBefore);
     while (d.weekday != s.day || !d.isAfter(now)) {
       d = DateTime(d.year, d.month, d.day + 1, d.hour, d.minute);
@@ -407,8 +409,10 @@ Future<void> main() async {
   await loadPlus();
   await orga.load();
   await suivi.load();
+  await conges.load();
   await scheduleAll(state.slots, state.reminder);
   await orga.reschedule();
+  await conges.reschedule();
   runApp(const DajApp());
 }
 
@@ -545,6 +549,7 @@ void showSettings(BuildContext context) {
             ),
             const SizedBox(height: 4),
             const PlusTiles(),
+            const CongesTile(),
             TextButton.icon(
               icon: const Icon(Icons.restore),
               label: const Text('Rétablir l\'emploi du temps d\'origine'),
@@ -972,7 +977,7 @@ class _TodayScreenState extends State<TodayScreen> {
         final now = DateTime.now();
         final nowMin = now.hour * 60 + now.minute;
         final date = dk(now);
-        final today = state.slots.where((s) => s.day == now.weekday).toList();
+        final today = state.slots.where((s) => s.day == now.weekday && !(s.subject == 'Cours' && conges.isOff(now))).toList();
 
         Slot? current;
         Slot? next;
@@ -1041,6 +1046,7 @@ class _TodayScreenState extends State<TodayScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             timerCard(),
+            const CongesBanner(),
             const MissionCard(),
             const OrgaCard(),
             const SuiviCard(),
