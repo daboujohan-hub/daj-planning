@@ -10,6 +10,7 @@ import 'extras.dart';
 import 'videos.dart';
 import 'plus.dart';
 import 'organiser.dart';
+import 'suivi.dart';
 
 // ───────────────────────── Données ─────────────────────────
 
@@ -405,6 +406,7 @@ Future<void> main() async {
   await extras.load();
   await loadPlus();
   await orga.load();
+  await suivi.load();
   await scheduleAll(state.slots, state.reminder);
   await orga.reschedule();
   runApp(const DajApp());
@@ -1041,6 +1043,7 @@ class _TodayScreenState extends State<TodayScreen> {
             timerCard(),
             const MissionCard(),
             const OrgaCard(),
+            const SuiviCard(),
             ...rows,
             if (missed.isNotEmpty) ...[
               const Padding(
