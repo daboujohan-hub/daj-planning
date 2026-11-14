@@ -8,6 +8,8 @@ import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'extras.dart';
 import 'videos.dart';
+import 'plus.dart';
+import 'organiser.dart';
 
 // ───────────────────────── Données ─────────────────────────
 
@@ -356,7 +358,10 @@ Future<void> _zoned(int id, String title, String body, DateTime local,
 
 /// Un rappel chaque semaine avant chaque créneau + le bilan du dimanche soir.
 Future<void> scheduleAll(List<Slot> slots, int minutesBefore) async {
-  await plugin.cancelAll();
+  final pend = await plugin.pendingNotificationRequests();
+  for (final r in pend) {
+    if (r.id < 200 || r.id == 997) await plugin.cancel(r.id);
+  }
   final now = DateTime.now();
   for (var i = 0; i < slots.length; i++) {
     final s = slots[i];
@@ -398,7 +403,10 @@ Future<void> main() async {
   await initNotifications();
   await state.load();
   await extras.load();
-  unawaited(scheduleAll(state.slots, state.reminder));
+  await loadPlus();
+  await orga.load();
+  await scheduleAll(state.slots, state.reminder);
+  await orga.reschedule();
   runApp(const DajApp());
 }
 
@@ -534,6 +542,7 @@ void showSettings(BuildContext context) {
               },
             ),
             const SizedBox(height: 4),
+            const PlusTiles(),
             TextButton.icon(
               icon: const Icon(Icons.restore),
               label: const Text('Rétablir l\'emploi du temps d\'origine'),
@@ -781,6 +790,7 @@ class _TodayScreenState extends State<TodayScreen> {
       leftSec = secs;
     });
     _notifyEnd(p, end);
+    if (p == 1) orga.eyeBreaks(DateTime.now());
   }
 
   void _stop() {
@@ -790,6 +800,7 @@ class _TodayScreenState extends State<TodayScreen> {
       endAt = null;
     });
     unawaited(plugin.cancel(998));
+    orga.cancelEyeBreaks();
   }
 
   void _togglePause() {
@@ -1029,6 +1040,7 @@ class _TodayScreenState extends State<TodayScreen> {
               ),
             timerCard(),
             const MissionCard(),
+            const OrgaCard(),
             ...rows,
             if (missed.isNotEmpty) ...[
               const Padding(
@@ -1302,3 +1314,7 @@ class BilanScreen extends StatelessWidget {
 /// Programme une notification ponctuelle (utilise par les ecrans en plus).
 Future<void> zonedNotify(int id, String title, String body, DateTime when) =>
     _zoned(id, title, body, when);
+
+/// Rappel quotidien a heure fixe (utilise par les ecrans en plus).
+Future<void> zonedDaily(int id, String title, String body, DateTime when) =>
+    _zoned(id, title, body, when, repeat: DateTimeComponents.time);
