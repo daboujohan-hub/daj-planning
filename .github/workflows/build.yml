@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       DAJ_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
     steps:
@@ -68,3 +70,12 @@ jobs:
         with:
           name: DAJ-Planning-APK
           path: build_app/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publier l'APK (lien de téléchargement public)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build_app/build/app/outputs/flutter-apk/app-release.apk DAJ-Planning.apk
+          gh release delete latest --yes --cleanup-tag --repo "$GITHUB_REPOSITORY" || true
+          gh release create latest DAJ-Planning.apk --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "DAJ Planning (dernière version)" --notes "Télécharge DAJ-Planning.apk puis installe-le sur ton téléphone Android."

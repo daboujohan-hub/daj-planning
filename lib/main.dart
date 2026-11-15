@@ -13,6 +13,7 @@ import 'organiser.dart';
 import 'suivi.dart';
 import 'apprendre.dart';
 import 'conges.dart';
+import 'partage.dart';
 import 'verrou.dart';
 
 // ───────────────────────── Données ─────────────────────────
@@ -300,6 +301,11 @@ class AppState extends ChangeNotifier {
     await _slotsChanged();
   }
 
+  Future<void> replaceSlots(List<Slot> list) async {
+    slots = List<Slot>.of(list);
+    await _slotsChanged();
+  }
+
   Future<void> resetSlots() async {
     slots = List<Slot>.of(defaultSchedule);
     notifyListeners();
@@ -563,6 +569,7 @@ void showSettings(BuildContext context) {
             const SizedBox(height: 4),
             const PlusTiles(),
             const CongesTile(),
+            const ShareTile(),
             const LockTile(),
             const SilenceTile(),
             TextButton.icon(
@@ -1052,6 +1059,7 @@ class _TodayScreenState extends State<TodayScreen> {
               ],
             ),
             const SizedBox(height: 12),
+            const OnboardingCard(),
             if (featured != null)
               feature(featured, now, featured == current)
             else
