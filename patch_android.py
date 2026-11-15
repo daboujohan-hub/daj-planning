@@ -20,6 +20,9 @@ perms = """<uses-permission android:name="android.permission.POST_NOTIFICATIONS"
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="https"/>
         </intent>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE"/>
+        </intent>
     </queries>
 """
 

@@ -11,6 +11,7 @@ import 'videos.dart';
 import 'plus.dart';
 import 'organiser.dart';
 import 'suivi.dart';
+import 'apprendre.dart';
 import 'conges.dart';
 import 'verrou.dart';
 
@@ -410,6 +411,7 @@ Future<void> main() async {
   await loadPlus();
   await orga.load();
   await suivi.load();
+  await apprendre.load();
   await conges.load();
   await verrou.load();
   await silence.load();
@@ -1063,6 +1065,7 @@ class _TodayScreenState extends State<TodayScreen> {
             const MissionCard(),
             const OrgaCard(),
             const SuiviCard(),
+            const ApprendreCard(),
             ...rows,
             if (missed.isNotEmpty) ...[
               const Padding(
