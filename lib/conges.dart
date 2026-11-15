@@ -49,6 +49,25 @@ class Conges extends ChangeNotifier {
     } catch (_) {
       // données illisibles : on repart de zéro
     }
+    // Congés officiels Côte d'Ivoire 2026-2027 (ajoutés une seule fois)
+    try {
+      final p2 = _p;
+      if (p2 != null && (p2.getBool('officielsCI2627') ?? false) == false) {
+        const officiels = [
+          Period(910001, 'Congé de Noël (Côte d\'Ivoire)', '2026-12-19', '2027-01-03', 'Congés', true),
+          Period(910002, 'Congé de février', '2027-02-06', '2027-02-14', 'Congés', true),
+          Period(910003, 'Congé de Pâques', '2027-03-20', '2027-04-04', 'Congés', true),
+          Period(910004, 'Grandes vacances (à vérifier)', '2027-06-12', '2027-09-12', 'Congés', true),
+        ];
+        for (final o in officiels) {
+          if (periods.every((x) => x.id != o.id)) periods = [...periods, o];
+        }
+        await p2.setString('periods', jsonEncode(periods.map((q) => q.toJson()).toList()));
+        await p2.setBool('officielsCI2627', true);
+      }
+    } catch (_) {
+      // les congés officiels sont un plus : on ne bloque jamais l'appli
+    }
     state.addListener(_onState);
   }
 
