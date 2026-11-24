@@ -596,7 +596,8 @@ List<Q> questionsDuJour(DateTime now, String subject) {
   final list = banque.where((q) => q.subject == subject).toList();
   final seed = int.parse(dk(now).replaceAll('-', '')) +
       subject.codeUnits.fold(0, (a, b) => a + b);
-  final idx = List<int>.generate(list.length, (i) => i)..shuffle(Random(seed));
+  final idx = List<int>.generate(list.length, (i) => i);
+  idx.shuffle(Random(seed ?? 0));
   return [for (final i in idx.take(5)) list[i]];
 }
 
